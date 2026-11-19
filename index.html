@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Student Management System</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- AUTHENTICATION SECTION -->
+  <div id="auth-container" class="auth-wrapper">
+    <div class="auth-card">
+      <div class="auth-header">
+        <div class="logo-badge">SMS</div>
+        <h2>Student Portal</h2>
+        <p>Manage students, attendance & daily schedules</p>
+      </div>
+
+      <!-- Login Form -->
+      <form id="login-form" class="auth-form">
+        <div class="form-group">
+          <label for="login-email">Email</label>
+          <input type="email" id="login-email" placeholder="arshad@student.edu" required />
+        </div>
+        <div class="form-group">
+          <label for="login-password">Password</label>
+          <input type="password" id="login-password" placeholder="••••••••" required />
+        </div>
+        <button type="submit" class="btn btn-primary btn-full">Sign In</button>
+        <button type="button" id="demo-login-btn" class="btn btn-secondary btn-full">
+          One-Click Demo Login (Arshad)
+        </button>
+        <p class="auth-switch">
+          Don't have an account? <span id="show-register">Register here</span>
+        </p>
+      </form>
+
+      <!-- Register Form -->
+      <form id="register-form" class="auth-form hidden">
+        <div class="form-group">
+          <label for="reg-name">Full Name</label>
+          <input type="text" id="reg-name" placeholder="Arshad" required />
+        </div>
+        <div class="form-group">
+          <label for="reg-email">Email</label>
+          <input type="email" id="reg-email" placeholder="arshad@student.edu" required />
+        </div>
+        <div class="form-group">
+          <label for="reg-course">Course / Role</label>
+          <input type="text" id="reg-course" placeholder="BCA 6th Sem" required />
+        </div>
+        <div class="form-group">
+          <label for="reg-password">Password</label>
+          <input type="password" id="reg-password" placeholder="Create password" required />
+        </div>
+        <button type="submit" class="btn btn-primary btn-full">Create Account</button>
+        <p class="auth-switch">
+          Already registered? <span id="show-login">Sign In</span>
+        </p>
+      </form>
+    </div>
+  </div>
+
+  <!-- MAIN APPLICATION SECTION -->
+  <div id="app-container" class="app-layout hidden">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <div class="logo-badge">SMS</div>
+        <span>EduManage</span>
+      </div>
+      <nav class="nav-menu">
+        <button class="nav-item active" data-tab="dashboard">Dashboard</button>
+        <button class="nav-item" data-tab="students">Students</button>
+        <button class="nav-item" data-tab="attendance">Attendance</button>
+        <button class="nav-item" data-tab="timetable">Timetable</button>
+        <button class="nav-item" data-tab="tasks">Study To-Do</button>
+        <button class="nav-item" data-tab="profile">Profile</button>
+      </nav>
+      <div class="sidebar-footer">
+        <button id="logout-btn" class="btn btn-danger btn-full">Logout</button>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <header class="topbar">
+        <div>
+          <h1 id="welcome-heading">Welcome, Arshad!</h1>
+          <p id="current-date-display" class="subtitle"></p>
+        </div>
+        <div class="user-pill">
+          <span id="user-badge-name">Arshad</span>
+        </div>
+      </header>
+
+      <!-- TAB 1: DASHBOARD -->
+      <section id="tab-dashboard" class="tab-section active">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <span class="stat-label">Total Students</span>
+            <h3 id="stat-total-students">0</h3>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Overall Attendance</span>
+            <h3 id="stat-attendance-pct">0%</h3>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Pending Tasks</span>
+            <h3 id="stat-pending-tasks">0</h3>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Today's Classes</span>
+            <h3 id="stat-today-classes">0</h3>
+          </div>
+        </div>
+
+        <div class="dashboard-grid">
+          <div class="card">
+            <div class="card-header">
+              <h3>Today's Schedule</h3>
+            </div>
+            <ul id="dashboard-schedule-list" class="clean-list"></ul>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h3>Priority Study Tasks</h3>
+            </div>
+            <ul id="dashboard-task-list" class="clean-list"></ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 2: STUDENTS CRUD -->
+      <section id="tab-students" class="tab-section hidden">
+        <div class="section-toolbar">
+          <div class="search-filters">
+            <input type="text" id="student-search" placeholder="Search name, roll no, email..." />
+            <select id="filter-course">
+              <option value="ALL">All Courses</option>
+              <option value="BCA">BCA</option>
+              <option value="B.Tech">B.Tech</option>
+            </select>
+            <select id="filter-sem">
+              <option value="ALL">All Semesters</option>
+              <option value="1">Sem 1</option>
+              <option value="2">Sem 2</option>
+              <option value="3">Sem 3</option>
+              <option value="4">Sem 4</option>
+              <option value="5">Sem 5</option>
+              <option value="6">Sem 6</option>
+            </select>
+          </div>
+          <button id="open-student-modal" class="btn btn-primary">+ Add Student</button>
+        </div>
+
+        <div class="card table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Roll No</th>
+                <th>Name</th>
+                <th>Course</th>
+                <th>Sem</th>
+                <th>Email</th>
+                <th>Attendance</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="students-table-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- TAB 3: ATTENDANCE TRACKER -->
+      <section id="tab-attendance" class="tab-section hidden">
+        <div class="section-toolbar">
+          <div class="attendance-controls">
+            <label for="attendance-date"><strong>Select Date:</strong></label>
+            <input type="date" id="attendance-date" />
+          </div>
+          <div class="bulk-actions">
+            <button id="mark-all-present" class="btn btn-success">Mark All Present</button>
+            <button id="mark-all-absent" class="btn btn-danger">Mark All Absent</button>
+          </div>
+        </div>
+
+        <div class="card table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Roll No</th>
+                <th>Student Name</th>
+                <th>Course</th>
+                <th>Overall %</th>
+                <th>Status for Selected Date</th>
+              </tr>
+            </thead>
+            <tbody id="attendance-table-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- TAB 4: TIMETABLE -->
+      <section id="tab-timetable" class="tab-section hidden">
+        <div class="card">
+          <h3>Add Class Slot</h3>
+          <form id="timetable-form" class="inline-form">
+            <select id="tt-day" required>
+              <option value="Monday">Monday</option>
+              <option value="Tuesday">Tuesday</option>
+              <option value="Wednesday">Wednesday</option>
+              <option value="Thursday">Thursday</option>
+              <option value="Friday">Friday</option>
+              <option value="Saturday">Saturday</option>
+            </select>
+            <input type="text" id="tt-time" placeholder="10:00 AM - 11:00 AM" required />
+            <input type="text" id="tt-subject" placeholder="Subject (e.g., Web Tech)" required />
+            <input type="text" id="tt-room" placeholder="Room / Lab" required />
+            <button type="submit" class="btn btn-primary">Add Slot</button>
+          </form>
+        </div>
+
+        <div class="card table-wrapper mt-20">
+          <table>
+            <thead>
+              <tr>
+                <th>Day</th>
+                <th>Time</th>
+                <th>Subject</th>
+                <th>Room</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="timetable-table-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- TAB 5: STUDY TO-DO LIST -->
+      <section id="tab-tasks" class="tab-section hidden">
+        <div class="card">
+          <h3>Add Study Task</h3>
+          <form id="task-form" class="inline-form">
+            <input type="text" id="task-title" placeholder="Task description..." required />
+            <select id="task-priority">
+              <option value="High">High Priority</option>
+              <option value="Medium" selected>Medium Priority</option>
+              <option value="Low">Low Priority</option>
+            </select>
+            <input type="date" id="task-due" required />
+            <button type="submit" class="btn btn-primary">Add Task</button>
+          </form>
+        </div>
+
+        <div class="card mt-20">
+          <ul id="tasks-full-list" class="clean-list"></ul>
+        </div>
+      </section>
+
+      <!-- TAB 6: PROFILE -->
+      <section id="tab-profile" class="tab-section hidden">
+        <div class="card profile-card">
+          <h3>Account Profile</h3>
+          <form id="profile-form" class="auth-form">
+            <div class="form-group">
+              <label for="prof-name">Display Name</label>
+              <input type="text" id="prof-name" required />
+            </div>
+            <div class="form-group">
+              <label for="prof-email">Email Address</label>
+              <input type="email" id="prof-email" required />
+            </div>
+            <div class="form-group">
+              <label for="prof-course">Program / Department</label>
+              <input type="text" id="prof-course" required />
+            </div>
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+          </form>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- MODAL: ADD / EDIT STUDENT -->
+  <div id="student-modal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modal-title">Add New Student</h3>
+        <button id="close-student-modal" class="close-btn">&times;</button>
+      </div>
+      <form id="student-form">
+        <input type="hidden" id="edit-student-id" />
+        <div class="form-group">
+          <label for="stu-roll">Roll Number</label>
+          <input type="text" id="stu-roll" placeholder="BCA-2026-01" required />
+        </div>
+        <div class="form-group">
+          <label for="stu-name">Full Name</label>
+          <input type="text" id="stu-name" placeholder="Student Name" required />
+        </div>
+        <div class="form-group">
+          <label for="stu-course">Course</label>
+          <select id="stu-course" required>
+            <option value="BCA">BCA</option>
+            <option value="B.Tech">B.Tech</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="stu-sem">Semester</label>
+          <select id="stu-sem" required>
+            <option value="1">Semester 1</option>
+            <option value="2">Semester 2</option>
+            <option value="3">Semester 3</option>
+            <option value="4">Semester 4</option>
+            <option value="5">Semester 5</option>
+            <option value="6">Semester 6</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="stu-email">Email</label>
+          <input type="email" id="stu-email" placeholder="student@college.edu" required />
+        </div>
+        <div class="modal-footer">
+          <button type="button" id="cancel-student-modal" class="btn btn-secondary">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Student</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
